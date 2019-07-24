@@ -15,16 +15,17 @@ class RaffleCard extends Component {
     const styles = StyleSheet.create({
       raffleCard: {
         alignItems: "center",
-        borderColor: "blue",
+        borderTopWidth: 1,
+        borderColor: "grey",
         // borderWidth: 2,
-        flexDirection: "column"
+        flexDirection: "column",
+        marginVertical: 12
       },
       raffleImage: {
         borderColor: "red",
         // borderWidth: 2,
         height: dimensions.height / 4,
         //might need to use height: dimensions.width here (rectangular vs square images)
-        marginTop: 20,
         width: dimensions.width
       },
       raffleTitle: {
@@ -34,28 +35,26 @@ class RaffleCard extends Component {
         textAlign: "center"
       },
       raffleOption: {
-        borderColor: "grey",
-        borderWidth: 1,
+        backgroundColor: "grey",
         fontSize: 16,
-        marginTop: 12,
-        textAlign: "center",
-        width: "85%"
+        marginTop: 8,
+        width: dimensions.width * 0.85
       }
     });
 
     return (
       <View style={styles.raffleCard}>
+        <Text style={styles.raffleTitle}>
+          {this.state.raffleEntry.sneaker_name}
+        </Text>
         <Image
           style={styles.raffleImage}
           source={{ uri: this.state.raffleEntry.image_url }}
         />
-        <Text style={styles.raffleTitle}>
-          {this.state.raffleEntry.sneaker_name}
-        </Text>
         {this.state.raffleEntry.raffles.map((raffle, index) => {
           return (
             <Text key={raffle.raffle_id} style={styles.raffleOption}>
-              {raffle.store_name} - Starts {raffle.start_time}
+              {raffle.store_name} - Starts {raffle.start_time_clean}
             </Text>
           );
         })}
