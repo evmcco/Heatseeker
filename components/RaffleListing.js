@@ -33,13 +33,16 @@ class RaffleListing extends Component {
         borderColor: "grey",
         borderWidth: 1,
         flexDirection: "row",
-        fontSize: 20,
         flexWrap: "wrap",
         justifyContent: "space-between",
         marginVertical: 4,
         paddingHorizontal: 12,
         paddingVertical: 4,
         width: dimensions.width * 0.85
+      },
+      text: {
+        fontSize: 16,
+        lineHeight: 22
       }
     });
 
@@ -47,26 +50,30 @@ class RaffleListing extends Component {
       <View key={this.state.listingData.raffle_id} style={styles.raffleOption}>
         {this.state.expanded == false ? (
           <>
-            <Text key={this.state.listingData.raffle_id}>
+            <Text style={styles.text} key={this.state.listingData.raffle_id}>
               {this.state.listingData.store_name} - Starts{" "}
               {this.state.listingData.start_time_clean}
             </Text>
             <TouchableOpacity onPress={this.expandCard}>
-              <FontAwesomeIcon icon={faChevronDown} />
+              <FontAwesomeIcon size={22} icon={faChevronDown} />
             </TouchableOpacity>
           </>
         ) : (
           <>
-            <Text key={this.state.listingData.raffle_id}>
+            <Text style={styles.text} key={this.state.listingData.raffle_id}>
               {this.state.listingData.store_name} - Starts{" "}
               {this.state.listingData.start_time_clean}
             </Text>
             <TouchableOpacity onPress={this.expandCard}>
-              <FontAwesomeIcon icon={faChevronUp} />
+              <FontAwesomeIcon size={22} icon={faChevronUp} />
             </TouchableOpacity>
-            <Text>Ends - {this.state.listingData.end_time_clean}</Text>
-            <Text>{this.state.listingData.address}</Text>
-            <Text>{this.state.listingData.description}</Text>
+            <Text style={styles.text}>
+              Ends - {this.state.listingData.end_time_clean}
+            </Text>
+            <Text style={styles.text}>{this.state.listingData.address}</Text>
+            <Text style={styles.text}>
+              {this.state.listingData.description}
+            </Text>
           </>
         )}
       </View>
