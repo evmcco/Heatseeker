@@ -1,5 +1,15 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Dimensions,
+  TouchableOpacity
+} from "react-native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import RaffleListing from "./RaffleListing";
 
 class RaffleCard extends Component {
   constructor(props) {
@@ -15,30 +25,26 @@ class RaffleCard extends Component {
     const styles = StyleSheet.create({
       raffleCard: {
         alignItems: "center",
-        borderTopWidth: 1,
+        borderBottomWidth: 1,
         borderColor: "grey",
         // borderWidth: 2,
         flexDirection: "column",
-        marginVertical: 12
+        paddingVertical: 12
       },
       raffleImage: {
         borderColor: "red",
         // borderWidth: 2,
-        height: dimensions.height / 4,
-        //might need to use height: dimensions.width here (rectangular vs square images)
+        // height: dimensions.height / 4,
+        height: dimensions.width,
+        resizeMode: "contain",
         width: dimensions.width
       },
       raffleTitle: {
         borderColor: "yellow",
         // borderWidth: 2,
-        fontSize: 16,
+        fontSize: 24,
+        fontWeight: "bold",
         textAlign: "center"
-      },
-      raffleOption: {
-        backgroundColor: "grey",
-        fontSize: 16,
-        marginTop: 8,
-        width: dimensions.width * 0.85
       }
     });
 
@@ -52,11 +58,7 @@ class RaffleCard extends Component {
           source={{ uri: this.state.raffleEntry.image_url }}
         />
         {this.state.raffleEntry.raffles.map((raffle, index) => {
-          return (
-            <Text key={raffle.raffle_id} style={styles.raffleOption}>
-              {raffle.store_name} - Starts {raffle.start_time_clean}
-            </Text>
-          );
+          return <RaffleListing key={raffle.raffle_id} listingData={raffle} />;
         })}
       </View>
     );

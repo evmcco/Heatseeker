@@ -24,7 +24,7 @@ class Main extends Component {
   }
 
   loadData = async () => {
-    const url = "http://localhost:3000/sneakers/all";
+    const url = "http://10.150.40.93:3000/sneakers/all";
     const response = await fetch(url, {
       method: "get"
     });
@@ -52,7 +52,7 @@ class Main extends Component {
     });
 
     return (
-      <ScrollView>
+      <ScrollView style={styles.body}>
         <View style={styles.main}>
           <View style={styles.header}>
             <Image source={require("../assets/heatseeker_logo.png")} />
