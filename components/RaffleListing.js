@@ -51,8 +51,8 @@ class RaffleListing extends Component {
         {this.state.expanded == false ? (
           <>
             <Text style={styles.text} key={this.state.listingData.raffle_id}>
-              {this.state.listingData.store_name} - Starts{" "}
-              {this.state.listingData.start_time_clean}
+              {this.state.listingData.store_name} -&nbsp;
+              {this.state.listingData.time_until}
             </Text>
             <TouchableOpacity onPress={this.expandCard}>
               <FontAwesomeIcon size={22} icon={faChevronDown} />
@@ -61,12 +61,15 @@ class RaffleListing extends Component {
         ) : (
           <>
             <Text style={styles.text} key={this.state.listingData.raffle_id}>
-              {this.state.listingData.store_name} - Starts{" "}
-              {this.state.listingData.start_time_clean}
+              {this.state.listingData.store_name} -&nbsp;
+              {this.state.listingData.time_until}
             </Text>
             <TouchableOpacity onPress={this.expandCard}>
               <FontAwesomeIcon size={22} icon={faChevronUp} />
             </TouchableOpacity>
+            <Text style={styles.text}>
+              Starts - {this.state.listingData.start_time_clean}&#13;
+            </Text>
             <Text style={styles.text}>
               Ends - {this.state.listingData.end_time_clean}
             </Text>
