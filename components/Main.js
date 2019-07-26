@@ -12,16 +12,26 @@ import RaffleCard from "./RaffleCard";
 
 class Main extends Component {
   state = {
-    sneakerRaffles: []
+    sneakerRaffles: [],
+    userLocationLat: 0,
+    userLocationLon: 0
   };
 
   async componentDidMount() {
     //lifecycle method
     const sneakerRaffles = await this.loadData();
+    await navigator.geolocation.getCurrentPosition(this.logGeoData);
     this.setState({
       sneakerRaffles
     });
   }
+
+  logGeoData = pos => {
+    this.setState({
+      userLocationLat: pos.coords.latitude,
+      userLocationLon: pos.coords.longitude
+    });
+  };
 
   loadData = async () => {
     const url = "http://10.150.40.93:3000/sneakers/all";
@@ -57,11 +67,18 @@ class Main extends Component {
           <View style={styles.header}>
             <Image source={require("../assets/heatseeker_logo.png")} />
           </View>
-          {this.state.sneakerRaffles.map(sneaker => {
-            return (
-              <RaffleCard key={sneaker.sneaker_id} raffleEntry={sneaker} />
-            );
-          })}
+          {!!this.state.userLocationLat
+            ? this.state.sneakerRaffles.map(sneaker => {
+                return (
+                  <RaffleCard
+                    key={sneaker.sneaker_id}
+                    raffleEntry={sneaker}
+                    userLocLat={this.state.userLocationLat}
+                    userLocLon={this.state.userLocationLon}
+                  />
+                );
+              })
+            : null}
         </View>
       </ScrollView>
     );

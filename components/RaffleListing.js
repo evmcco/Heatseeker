@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   Dimensions,
   TouchableOpacity
 } from "react-native";
@@ -40,33 +39,64 @@ class RaffleListing extends Component {
         paddingVertical: 4,
         width: dimensions.width * 0.85
       },
-      text: {
+      raffleTouch: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+        width: dimensions.width * 0.8
+      },
+      firstRow: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        fontSize: 16,
+        justifyContent: "space-between",
+        lineHeight: 22,
+        width: "100%"
+      },
+      firstRowText: {
         fontSize: 16,
         lineHeight: 22
+      },
+      text: {
+        fontSize: 16,
+        lineHeight: 22,
+        width: "100%"
       }
     });
 
     return (
       <View key={this.state.listingData.raffle_id} style={styles.raffleOption}>
         {this.state.expanded == false ? (
-          <>
-            <Text style={styles.text} key={this.state.listingData.raffle_id}>
-              {this.state.listingData.store_name} -&nbsp;
-              {this.state.listingData.time_until}
-            </Text>
-            <TouchableOpacity onPress={this.expandCard}>
+          <TouchableOpacity
+            style={styles.raffleTouch}
+            onPress={this.expandCard}
+          >
+            <View
+              style={styles.firstRow}
+              key={this.state.listingData.raffle_id}
+            >
+              <Text style={styles.firstRowText}>
+                {this.state.listingData.store_name} -&nbsp;
+                {this.state.listingData.time_until}
+              </Text>
               <FontAwesomeIcon size={22} icon={faChevronDown} />
-            </TouchableOpacity>
-          </>
+            </View>
+          </TouchableOpacity>
         ) : (
-          <>
-            <Text style={styles.text} key={this.state.listingData.raffle_id}>
-              {this.state.listingData.store_name} -&nbsp;
-              {this.state.listingData.time_until}
-            </Text>
-            <TouchableOpacity onPress={this.expandCard}>
+          <TouchableOpacity
+            style={styles.raffleTouch}
+            onPress={this.expandCard}
+          >
+            <View
+              style={styles.firstRow}
+              key={this.state.listingData.raffle_id}
+            >
+              <Text style={styles.firstRowText}>
+                {this.state.listingData.store_name} -&nbsp;
+                {this.state.listingData.time_until}
+              </Text>
               <FontAwesomeIcon size={22} icon={faChevronUp} />
-            </TouchableOpacity>
+            </View>
             <Text style={styles.text}>
               Starts - {this.state.listingData.start_time_clean}&#13;
             </Text>
@@ -77,7 +107,7 @@ class RaffleListing extends Component {
             <Text style={styles.text}>
               {this.state.listingData.description}
             </Text>
-          </>
+          </TouchableOpacity>
         )}
       </View>
     );

@@ -1,14 +1,5 @@
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Dimensions,
-  TouchableOpacity
-} from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
 import RaffleListing from "./RaffleListing";
 
 class RaffleCard extends Component {
@@ -17,6 +8,32 @@ class RaffleCard extends Component {
     this.state = {
       raffleEntry: this.props.raffleEntry
     };
+  }
+
+  findDistanceBetweenCoords = (a, b) => {
+    return Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2);
+  };
+
+  sortRafflesByDistance = () => {
+    let newRaffleEntry = { ...this.state.raffleEntry };
+    newRaffleEntry.raffles.sort(
+      (a, b) =>
+        this.findDistanceBetweenCoords(
+          [a.address_lat, a.address_lon],
+          [this.props.userLocLat, this.props.userLocLon]
+        ) -
+        this.findDistanceBetweenCoords(
+          [b.address_lat, b.address_lon],
+          [this.props.userLocLat, this.props.userLocLon]
+        )
+    );
+    this.setState({
+      raffleEntry: newRaffleEntry
+    });
+  };
+
+  componentDidMount() {
+    this.sortRafflesByDistance();
   }
 
   render() {
@@ -45,6 +62,9 @@ class RaffleCard extends Component {
         fontSize: 24,
         fontWeight: "bold",
         textAlign: "center"
+      },
+      rafflePrice: {
+        fontSize: 18
       }
     });
 
@@ -53,6 +73,7 @@ class RaffleCard extends Component {
         <Text style={styles.raffleTitle}>
           {this.state.raffleEntry.sneaker_name}
         </Text>
+        <Text style={styles.rafflePrice}>${this.state.raffleEntry.price}</Text>
         <Image
           style={styles.raffleImage}
           source={{ uri: this.state.raffleEntry.image_url }}
