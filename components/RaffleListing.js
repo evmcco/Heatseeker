@@ -4,10 +4,15 @@ import {
   Text,
   View,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  Linking
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronDown,
+  faChevronUp,
+  faMapMarkedAlt
+} from "@fortawesome/free-solid-svg-icons";
 
 class RaffleListing extends Component {
   constructor(props) {
@@ -24,6 +29,15 @@ class RaffleListing extends Component {
     });
   };
 
+  openMapsLink = () => {
+    let storeName = this.state.listingData.store_name;
+    let urlStoreName = storeName.replace(/ /g, "+");
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${urlStoreName}`;
+    Linking.openURL(mapsUrl).catch(err =>
+      console.error("An error occurred", err)
+    );
+  };
+
   render() {
     const dimensions = Dimensions.get("window");
 
@@ -31,9 +45,6 @@ class RaffleListing extends Component {
       raffleOption: {
         borderColor: "grey",
         borderWidth: 1,
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
         marginVertical: 4,
         paddingHorizontal: 12,
         paddingVertical: 4,
@@ -47,10 +58,7 @@ class RaffleListing extends Component {
       },
       firstRow: {
         flexDirection: "row",
-        flexWrap: "wrap",
-        fontSize: 16,
         justifyContent: "space-between",
-        lineHeight: 22,
         width: "100%"
       },
       firstRowText: {
@@ -83,20 +91,22 @@ class RaffleListing extends Component {
             </View>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity
-            style={styles.raffleTouch}
-            onPress={this.expandCard}
-          >
-            <View
-              style={styles.firstRow}
-              key={this.state.listingData.raffle_id}
+          <View style={styles.raffleTouch}>
+            <TouchableOpacity
+              style={styles.raffleTouch}
+              onPress={this.expandCard}
             >
-              <Text style={styles.firstRowText}>
-                {this.state.listingData.store_name} -&nbsp;
-                {this.state.listingData.time_until}
-              </Text>
-              <FontAwesomeIcon size={22} icon={faChevronUp} />
-            </View>
+              <View
+                style={styles.firstRow}
+                key={this.state.listingData.raffle_id}
+              >
+                <Text style={styles.firstRowText}>
+                  {this.state.listingData.store_name} -&nbsp;
+                  {this.state.listingData.time_until}
+                </Text>
+                <FontAwesomeIcon size={22} icon={faChevronUp} />
+              </View>
+            </TouchableOpacity>
             <Text style={styles.text}>
               Starts - {this.state.listingData.start_time_clean}&#13;
             </Text>
@@ -107,7 +117,17 @@ class RaffleListing extends Component {
             <Text style={styles.text}>
               {this.state.listingData.description}
             </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={this.openMapsLink}
+              style={{ width: "100%" }}
+            >
+              <FontAwesomeIcon
+                size={22}
+                icon={faMapMarkedAlt}
+                style={{ marginLeft: "auto" }}
+              />
+            </TouchableOpacity>
+          </View>
         )}
       </View>
     );
