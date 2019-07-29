@@ -7,6 +7,7 @@ import {
   Dimensions,
   ScrollView
 } from "react-native";
+import LinearGradient from "react-native-linear-gradient";
 
 import RaffleCard from "./RaffleCard";
 
@@ -34,7 +35,7 @@ class Main extends Component {
   };
 
   loadData = async () => {
-    const url = "http://10.150.40.93:3000/sneakers/all";
+    const url = "http://10.150.50.166:3000/sneakers/all";
     const response = await fetch(url, {
       method: "get"
     });
@@ -46,8 +47,12 @@ class Main extends Component {
     const dimensions = Dimensions.get("window");
 
     const styles = StyleSheet.create({
+      body: {
+        backgroundColor: "rgb(188,188,190)"
+      },
       main: {
         alignItems: "center",
+        backgroundColor: "white",
         borderColor: "blue",
         // borderWidth: 2,
         flexDirection: "column",
@@ -55,8 +60,15 @@ class Main extends Component {
         top: 40
       },
       header: {
+        backgroundColor: "rgb(188,188,190)",
         borderColor: "green",
         // borderWidth: 2,
+        width: "100%"
+      },
+      headerText: {
+        color: "#E52D00",
+        fontWeight: "bold",
+        fontSize: 40,
         textAlign: "center"
       }
     });
@@ -65,7 +77,8 @@ class Main extends Component {
       <ScrollView style={styles.body}>
         <View style={styles.main}>
           <View style={styles.header}>
-            <Image source={require("../assets/heatseeker_logo.png")} />
+            <Text style={styles.headerText}>Heatseeker</Text>
+            {/* <Image source={require("../assets/heatseeker_logo.png")} /> */}
           </View>
           {!!this.state.userLocationLat
             ? this.state.sneakerRaffles.map(sneaker => {
