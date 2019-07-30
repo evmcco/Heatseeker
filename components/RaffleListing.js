@@ -13,6 +13,7 @@ import {
   faChevronUp,
   faMapMarkedAlt
 } from "@fortawesome/free-solid-svg-icons";
+import { faInstagram } from "@fortawesome/free-brands-svg-icons";
 
 class RaffleListing extends Component {
   constructor(props) {
@@ -35,6 +36,13 @@ class RaffleListing extends Component {
     const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${urlStoreName}`;
     Linking.openURL(mapsUrl).catch(err =>
       console.error("An error occurred", err)
+    );
+  };
+
+  openInstaLink = () => {
+    let instaUrl = this.state.listingData.post_url;
+    Linking.openURL(instaUrl).catch(err =>
+      console.error("An error has occurred", err)
     );
   };
 
@@ -68,6 +76,12 @@ class RaffleListing extends Component {
       text: {
         fontSize: 16,
         lineHeight: 22,
+        width: "100%"
+      },
+      actions: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        marginTop: 8,
         width: "100%"
       }
     });
@@ -117,16 +131,20 @@ class RaffleListing extends Component {
             <Text style={styles.text}>
               {this.state.listingData.description}
             </Text>
-            <TouchableOpacity
-              onPress={this.openMapsLink}
-              style={{ width: "100%" }}
-            >
-              <FontAwesomeIcon
-                size={22}
-                icon={faMapMarkedAlt}
-                style={{ marginLeft: "auto" }}
-              />
-            </TouchableOpacity>
+            <View style={styles.actions}>
+              {!!this.state.listingData.post_url ? (
+                <TouchableOpacity onPress={this.openInstaLink}>
+                  <FontAwesomeIcon size={22} icon={faInstagram} />
+                </TouchableOpacity>
+              ) : null}
+              <TouchableOpacity onPress={this.openMapsLink}>
+                <FontAwesomeIcon
+                  size={22}
+                  icon={faMapMarkedAlt}
+                  style={{ marginLeft: 4 }}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       </View>
