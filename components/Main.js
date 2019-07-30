@@ -1,36 +1,15 @@
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  Dimensions,
-  ScrollView
-} from "react-native";
-import { AuthSession, Notifications } from "expo";
+import { StyleSheet, Text, View, ScrollView } from "react-native";
+import { Notifications } from "expo";
 import * as Permissions from "expo-permissions";
 import RaffleCard from "./RaffleCard";
-import jwtDecode from "jwt-decode";
-
-const auth0ClientId = "fTnv2FOpy7TV16I00U5KF3On5slIbYBy";
-const auth0Domain = "https://heatseeker.auth0.com";
-
-function toQueryString(params) {
-  return (
-    "?" +
-    Object.entries(params)
-      .map(
-        ([key, value]) =>
-          `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-      )
-      .join("&")
-  );
-}
+import Login from "./Login";
 
 class Main extends Component {
   state = {
     sneakerRaffles: [],
     name: null,
+    user_id: null,
     userLocationLat: 0,
     userLocationLon: 0
   };
@@ -60,52 +39,24 @@ class Main extends Component {
     return data;
   };
 
-  login = async () => {
-    // Retrieve the redirect URL, add this to the callback URL list
-    // of your Auth0 application.
-    const redirectUrl = AuthSession.getRedirectUrl();
-    console.log(`Redirect URL: ${redirectUrl}`);
-
-    // Structure the auth parameters and URL
-    const queryParams = toQueryString({
-      client_id: auth0ClientId,
-      redirect_uri: redirectUrl,
-      response_type: "id_token", // id_token will return a JWT token
-      scope: "openid profile", // retrieve the user's profile
-      nonce: "nonce" // ideally, this will be a random value
-    });
-    const authUrl = `${auth0Domain}/authorize` + queryParams;
-
-    // Perform the authentication
-    const response = await AuthSession.startAsync({ authUrl });
-    console.log("Authentication response", response);
-
-    if (response.type === "success") {
-      this.handleResponse(response.params);
+  getNotificationToken = async () => {
+    const { status, permission } = await Permissions.askAsync(
+      Permissions.NOTIFICATIONS
+    );
+    if (status === "granted") {
+      return await Notifications.getExpoPushTokenAsync();
     }
   };
 
-  handleResponse = response => {
-    if (response.error) {
-      Alert(
-        "Authentication error",
-        response.error_description || "something went wrong"
-      );
-      return;
-    }
-
-    // Retrieve the JWT token and decode it
-    const jwtToken = response.id_token;
-    const decoded = jwtDecode(jwtToken);
-
-    const { name } = decoded;
-    this.setState({ name });
+  setLoginResponseToState = async (name, sub) => {
+    this.setState({
+      name,
+      user_id: sub
+    });
+    console.log("Post login state:", this.state.name, this.state.sub);
   };
 
   render() {
-    const dimensions = Dimensions.get("window");
-    const { name } = this.state;
-
     const styles = StyleSheet.create({
       deviceInfo: {
         backgroundColor: "rgb(220,220,222)"
@@ -133,9 +84,6 @@ class Main extends Component {
         top: 40,
         width: "100%"
       },
-      login: {
-        width: "20%"
-      },
       headerText: {
         color: "#E52D00",
         fontWeight: "bold",
@@ -150,18 +98,7 @@ class Main extends Component {
     return (
       <View style={styles.deviceInfo}>
         <View style={styles.header}>
-          <View style={styles.login}>
-            {name ? (
-              <>
-                <Button
-                  title="Logout"
-                  onPress={() => this.setState({ name: null })}
-                />
-              </>
-            ) : (
-              <Button title="Login" onPress={this.login} />
-            )}
-          </View>
+          <Login setLoginResponseToState={this.setLoginResponseToState} />
           <Text style={styles.headerText}>Heatseeker</Text>
           <Text style={styles.icon} />
         </View>
