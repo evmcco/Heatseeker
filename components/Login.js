@@ -21,14 +21,14 @@ function toQueryString(params) {
 class Login extends Component {
   state = {
     name: null,
-    sub: {}
+    user_id: null
   };
 
   login = async () => {
     // Retrieve the redirect URL, add this to the callback URL list
     // of your Auth0 application.
     const redirectUrl = AuthSession.getRedirectUrl();
-    console.log(`Redirect URL: ${redirectUrl}`);
+    // console.log(`Redirect URL: ${redirectUrl}`);
 
     // Structure the auth parameters and URL
     const queryParams = toQueryString({
@@ -61,11 +61,10 @@ class Login extends Component {
     // Retrieve the JWT token and decode it
     const jwtToken = response.id_token;
     const decoded = jwtDecode(jwtToken);
-    console.log("Decoded Token:", decoded);
 
     const { name, sub } = decoded;
-    this.setState({ name, sub });
-    this.props.setLoginResponseToState(name, { sub });
+    this.props.setLoginResponseToState(name, sub);
+    this.setState({ name, user_id: sub });
   };
 
   render() {
@@ -83,7 +82,7 @@ class Login extends Component {
           <>
             <Button
               title="Logout"
-              onPress={() => this.setState({ name: null })}
+              onPress={() => this.setState({ name: null, user_id: null })}
             />
           </>
         ) : (

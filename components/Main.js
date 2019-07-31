@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import { StyleSheet, Text, View, ScrollView, Button } from "react-native";
 import { Notifications } from "expo";
 import * as Permissions from "expo-permissions";
 import RaffleCard from "./RaffleCard";
@@ -16,11 +16,17 @@ class Main extends Component {
 
   async componentDidMount() {
     //lifecycle method
-    const sneakerRaffles = await this.loadData();
+    const sneakerRaffles = await this.loadSneakerData();
     await navigator.geolocation.getCurrentPosition(this.logGeoData);
     this.setState({
       sneakerRaffles
     });
+  }
+
+  async componentDidUpdate() {
+    if (!!this.state.user_id) {
+      await this.getNotificationToken();
+    }
   }
 
   logGeoData = pos => {
@@ -30,7 +36,7 @@ class Main extends Component {
     });
   };
 
-  loadData = async () => {
+  loadSneakerData = async () => {
     const url = "http://10.150.40.93:3000/sneakers/all";
     const response = await fetch(url, {
       method: "get"
@@ -40,20 +46,47 @@ class Main extends Component {
   };
 
   getNotificationToken = async () => {
-    const { status, permission } = await Permissions.askAsync(
+    const { status: existingStatus } = await Permissions.askAsync(
       Permissions.NOTIFICATIONS
     );
-    if (status === "granted") {
-      return await Notifications.getExpoPushTokenAsync();
+
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
     }
+
+    if (finalStatus !== "granted") {
+      return;
+    }
+
+    let pushToken = await Notifications.getExpoPushTokenAsync();
+    const apiUrl = `https://heatseeker.auth0.com/api/v2/users/${
+      this.state.user_id
+    }`;
+    const auth0Token =
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik16Y3pOakk1UXpnME1VRkROVGsyTWpJM1F6VTBORVpHTlRJNU1rVXpRa0l4UXpsQ1JUbEJOdyJ9.eyJpc3MiOiJodHRwczovL2hlYXRzZWVrZXIuYXV0aDAuY29tLyIsInN1YiI6IlVLTlE2U0ZFU3dUeG1uRTIwTnBqdXp3RVBTTlh2M0dQQGNsaWVudHMiLCJhdWQiOiJodHRwczovL2hlYXRzZWVrZXIuYXV0aDAuY29tL2FwaS92Mi8iLCJpYXQiOjE1NjQ1OTU2NTksImV4cCI6MTU2NDY4MjA1OSwiYXpwIjoiVUtOUTZTRkVTd1R4bW5FMjBOcGp1endFUFNOWHYzR1AiLCJzY29wZSI6InJlYWQ6Y2xpZW50X2dyYW50cyBjcmVhdGU6Y2xpZW50X2dyYW50cyBkZWxldGU6Y2xpZW50X2dyYW50cyB1cGRhdGU6Y2xpZW50X2dyYW50cyByZWFkOnVzZXJzIHVwZGF0ZTp1c2VycyBkZWxldGU6dXNlcnMgY3JlYXRlOnVzZXJzIHJlYWQ6dXNlcnNfYXBwX21ldGFkYXRhIHVwZGF0ZTp1c2Vyc19hcHBfbWV0YWRhdGEgZGVsZXRlOnVzZXJzX2FwcF9tZXRhZGF0YSBjcmVhdGU6dXNlcnNfYXBwX21ldGFkYXRhIGNyZWF0ZTp1c2VyX3RpY2tldHMgcmVhZDpjbGllbnRzIHVwZGF0ZTpjbGllbnRzIGRlbGV0ZTpjbGllbnRzIGNyZWF0ZTpjbGllbnRzIHJlYWQ6Y2xpZW50X2tleXMgdXBkYXRlOmNsaWVudF9rZXlzIGRlbGV0ZTpjbGllbnRfa2V5cyBjcmVhdGU6Y2xpZW50X2tleXMgcmVhZDpjb25uZWN0aW9ucyB1cGRhdGU6Y29ubmVjdGlvbnMgZGVsZXRlOmNvbm5lY3Rpb25zIGNyZWF0ZTpjb25uZWN0aW9ucyByZWFkOnJlc291cmNlX3NlcnZlcnMgdXBkYXRlOnJlc291cmNlX3NlcnZlcnMgZGVsZXRlOnJlc291cmNlX3NlcnZlcnMgY3JlYXRlOnJlc291cmNlX3NlcnZlcnMgcmVhZDpkZXZpY2VfY3JlZGVudGlhbHMgdXBkYXRlOmRldmljZV9jcmVkZW50aWFscyBkZWxldGU6ZGV2aWNlX2NyZWRlbnRpYWxzIGNyZWF0ZTpkZXZpY2VfY3JlZGVudGlhbHMgcmVhZDpydWxlcyB1cGRhdGU6cnVsZXMgZGVsZXRlOnJ1bGVzIGNyZWF0ZTpydWxlcyByZWFkOnJ1bGVzX2NvbmZpZ3MgdXBkYXRlOnJ1bGVzX2NvbmZpZ3MgZGVsZXRlOnJ1bGVzX2NvbmZpZ3MgcmVhZDplbWFpbF9wcm92aWRlciB1cGRhdGU6ZW1haWxfcHJvdmlkZXIgZGVsZXRlOmVtYWlsX3Byb3ZpZGVyIGNyZWF0ZTplbWFpbF9wcm92aWRlciBibGFja2xpc3Q6dG9rZW5zIHJlYWQ6c3RhdHMgcmVhZDp0ZW5hbnRfc2V0dGluZ3MgdXBkYXRlOnRlbmFudF9zZXR0aW5ncyByZWFkOmxvZ3MgcmVhZDpzaGllbGRzIGNyZWF0ZTpzaGllbGRzIGRlbGV0ZTpzaGllbGRzIHJlYWQ6YW5vbWFseV9ibG9ja3MgZGVsZXRlOmFub21hbHlfYmxvY2tzIHVwZGF0ZTp0cmlnZ2VycyByZWFkOnRyaWdnZXJzIHJlYWQ6Z3JhbnRzIGRlbGV0ZTpncmFudHMgcmVhZDpndWFyZGlhbl9mYWN0b3JzIHVwZGF0ZTpndWFyZGlhbl9mYWN0b3JzIHJlYWQ6Z3VhcmRpYW5fZW5yb2xsbWVudHMgZGVsZXRlOmd1YXJkaWFuX2Vucm9sbG1lbnRzIGNyZWF0ZTpndWFyZGlhbl9lbnJvbGxtZW50X3RpY2tldHMgcmVhZDp1c2VyX2lkcF90b2tlbnMgY3JlYXRlOnBhc3N3b3Jkc19jaGVja2luZ19qb2IgZGVsZXRlOnBhc3N3b3Jkc19jaGVja2luZ19qb2IgcmVhZDpjdXN0b21fZG9tYWlucyBkZWxldGU6Y3VzdG9tX2RvbWFpbnMgY3JlYXRlOmN1c3RvbV9kb21haW5zIHJlYWQ6ZW1haWxfdGVtcGxhdGVzIGNyZWF0ZTplbWFpbF90ZW1wbGF0ZXMgdXBkYXRlOmVtYWlsX3RlbXBsYXRlcyByZWFkOm1mYV9wb2xpY2llcyB1cGRhdGU6bWZhX3BvbGljaWVzIHJlYWQ6cm9sZXMgY3JlYXRlOnJvbGVzIGRlbGV0ZTpyb2xlcyB1cGRhdGU6cm9sZXMgcmVhZDpwcm9tcHRzIHVwZGF0ZTpwcm9tcHRzIHJlYWQ6YnJhbmRpbmcgdXBkYXRlOmJyYW5kaW5nIiwiZ3R5IjoiY2xpZW50LWNyZWRlbnRpYWxzIn0.oNIpF4gAh6IvAGz319UCr-clRQtgSLEnvJcFw3aJS9uk_g7LF6FE502D61neN-zQsvNUTslmkIfpovibSwUJ_1nd8PPMIciqNJT78SAdurcfRe6DNVSMVrJ-jZcAy5caitiS95OlW9ImeZYEFKalwGBZI1wmBAl8R_bm2iu0Z-9VY9YPvsZqczjtjfxCeiIRJEdp3DyQ_25qFZW2ewgnDV5UjjhOga-1oy2EAv_WvioBJYomqlcZydI-Ze7itlTsv-Z1W0qowS0KBcADO7X57K0p-CCf7uuBWrWLD2ki_-a4R1HxpgV_zWkhshEdvOwS6cnaqv646t5NxxaIO6Gxaw";
+    console.log("api url:", apiUrl);
+    console.log("push token", pushToken);
+    const response = await fetch(apiUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${auth0Token}`
+      },
+      method: "PATCH",
+      body: JSON.stringify({
+        user_metadata: { Expo_Push_Notif_Token: pushToken }
+      })
+    });
+    console.log("notification token patch call response:", response);
   };
 
-  setLoginResponseToState = async (name, sub) => {
+  setLoginResponseToState = async (name, user_id) => {
     this.setState({
       name,
-      user_id: sub
+      user_id
     });
-    console.log("Post login state:", this.state.name, this.state.sub);
+    console.log("Post login state:", this.state.name, this.state.user_id);
   };
 
   render() {
