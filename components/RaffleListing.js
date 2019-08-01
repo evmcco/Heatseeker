@@ -12,7 +12,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faChevronDown,
   faChevronUp,
-  faMapMarkedAlt
+  faMapMarkedAlt,
+  faInfoCircle
 } from "@fortawesome/free-solid-svg-icons";
 import { faInstagram } from "@fortawesome/free-brands-svg-icons";
 
@@ -76,6 +77,7 @@ class RaffleListing extends Component {
         width: dimensions.width * 0.8
       },
       firstRow: {
+        alignItems: "center",
         flexDirection: "row",
         fontFamily: "montserrat",
         justifyContent: "space-between",
@@ -121,7 +123,7 @@ class RaffleListing extends Component {
                     {this.state.listingData.store_name} -&nbsp;
                     {this.state.listingData.time_until}
                   </Text>
-                  <FontAwesomeIcon size={22} icon={faChevronDown} />
+                  <FontAwesomeIcon size={16} icon={faInfoCircle} />
                 </View>
               </TouchableOpacity>
             ) : (
@@ -138,7 +140,7 @@ class RaffleListing extends Component {
                       {this.state.listingData.store_name} -&nbsp;
                       {this.state.listingData.time_until}
                     </Text>
-                    <FontAwesomeIcon size={22} icon={faChevronUp} />
+                    <FontAwesomeIcon size={16} icon={faInfoCircle} />
                   </View>
                 </TouchableOpacity>
                 <Text style={styles.text}>
@@ -147,9 +149,6 @@ class RaffleListing extends Component {
                 <Text style={styles.text}>
                   Ends - {this.state.listingData.end_time_clean}
                 </Text>
-                {/* <Text style={styles.text}>
-                  {this.state.listingData.address}
-                </Text> */}
                 <Text style={styles.text}>
                   {this.state.listingData.description}
                 </Text>
