@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
+import { Font } from "expo";
 import RaffleListing from "./RaffleListing";
 
 class RaffleCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      raffleEntry: this.props.raffleEntry
+      raffleEntry: this.props.raffleEntry,
+      fontLoaded: false
     };
   }
 
@@ -32,8 +34,13 @@ class RaffleCard extends Component {
     });
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     this.sortRafflesByDistance();
+    await Font.loadAsync({
+      montserrat: require("../assets/fonts/Montserrat-Regular.ttf"),
+      "montserrat-semi-bold": require("../assets/fonts/Montserrat-SemiBold.ttf")
+    });
+    this.setState({ fontLoaded: true });
   }
 
   render() {
@@ -59,29 +66,38 @@ class RaffleCard extends Component {
       raffleTitle: {
         borderColor: "yellow",
         // borderWidth: 2,
+        fontFamily: "montserrat-semi-bold",
         fontSize: 24,
-        fontWeight: "bold",
         textAlign: "center"
       },
       rafflePrice: {
+        fontFamily: "montserrat-semi-bold",
         fontSize: 18
       }
     });
 
     return (
-      <View style={styles.raffleCard}>
-        <Text style={styles.raffleTitle}>
-          {this.state.raffleEntry.sneaker_name}
-        </Text>
-        <Text style={styles.rafflePrice}>${this.state.raffleEntry.price}</Text>
-        <Image
-          style={styles.raffleImage}
-          source={{ uri: this.state.raffleEntry.image_url }}
-        />
-        {this.state.raffleEntry.raffles.map((raffle, index) => {
-          return <RaffleListing key={raffle.raffle_id} listingData={raffle} />;
-        })}
-      </View>
+      <>
+        {!!this.state.fontLoaded ? (
+          <View style={styles.raffleCard}>
+            <Text style={styles.raffleTitle}>
+              {this.state.raffleEntry.sneaker_name}
+            </Text>
+            <Text style={styles.rafflePrice}>
+              ${this.state.raffleEntry.price}
+            </Text>
+            <Image
+              style={styles.raffleImage}
+              source={{ uri: this.state.raffleEntry.image_url }}
+            />
+            {this.state.raffleEntry.raffles.map((raffle, index) => {
+              return (
+                <RaffleListing key={raffle.raffle_id} listingData={raffle} />
+              );
+            })}
+          </View>
+        ) : null}
+      </>
     );
   }
 }

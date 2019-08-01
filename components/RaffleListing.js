@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Linking
 } from "react-native";
+import { Font } from "expo";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faChevronDown,
@@ -20,8 +21,16 @@ class RaffleListing extends Component {
     super(props);
     this.state = {
       listingData: this.props.listingData,
-      expanded: false
+      expanded: false,
+      fontLoaded: false
     };
+  }
+
+  async componentDidMount() {
+    await Font.loadAsync({
+      montserrat: require("../assets/fonts/Montserrat-Regular.ttf")
+    });
+    this.setState({ fontLoaded: true });
   }
 
   expandCard = () => {
@@ -53,6 +62,7 @@ class RaffleListing extends Component {
       raffleOption: {
         borderColor: "grey",
         borderWidth: 1,
+        fontFamily: "montserrat",
         marginVertical: 4,
         paddingHorizontal: 12,
         paddingVertical: 4,
@@ -61,24 +71,29 @@ class RaffleListing extends Component {
       raffleTouch: {
         flexDirection: "row",
         flexWrap: "wrap",
+        fontFamily: "montserrat",
         justifyContent: "space-between",
         width: dimensions.width * 0.8
       },
       firstRow: {
         flexDirection: "row",
+        fontFamily: "montserrat",
         justifyContent: "space-between",
         width: "100%"
       },
       firstRowText: {
-        fontSize: 16,
+        fontFamily: "montserrat",
+        fontSize: 15,
         lineHeight: 22
       },
       text: {
-        fontSize: 16,
+        fontFamily: "montserrat",
+        fontSize: 15,
         lineHeight: 22,
         width: "100%"
       },
       actions: {
+        fontFamily: "montserrat",
         flexDirection: "row",
         justifyContent: "flex-end",
         marginTop: 8,
@@ -87,67 +102,76 @@ class RaffleListing extends Component {
     });
 
     return (
-      <View key={this.state.listingData.raffle_id} style={styles.raffleOption}>
-        {this.state.expanded == false ? (
-          <TouchableOpacity
-            style={styles.raffleTouch}
-            onPress={this.expandCard}
+      <>
+        {this.state.fontLoaded ? (
+          <View
+            key={this.state.listingData.raffle_id}
+            style={styles.raffleOption}
           >
-            <View
-              style={styles.firstRow}
-              key={this.state.listingData.raffle_id}
-            >
-              <Text style={styles.firstRowText}>
-                {this.state.listingData.store_name} -&nbsp;
-                {this.state.listingData.time_until}
-              </Text>
-              <FontAwesomeIcon size={22} icon={faChevronDown} />
-            </View>
-          </TouchableOpacity>
-        ) : (
-          <View style={styles.raffleTouch}>
-            <TouchableOpacity
-              style={styles.raffleTouch}
-              onPress={this.expandCard}
-            >
-              <View
-                style={styles.firstRow}
-                key={this.state.listingData.raffle_id}
+            {this.state.expanded == false ? (
+              <TouchableOpacity
+                style={styles.raffleTouch}
+                onPress={this.expandCard}
               >
-                <Text style={styles.firstRowText}>
-                  {this.state.listingData.store_name} -&nbsp;
-                  {this.state.listingData.time_until}
-                </Text>
-                <FontAwesomeIcon size={22} icon={faChevronUp} />
-              </View>
-            </TouchableOpacity>
-            <Text style={styles.text}>
-              Starts - {this.state.listingData.start_time_clean}&#13;
-            </Text>
-            <Text style={styles.text}>
-              Ends - {this.state.listingData.end_time_clean}
-            </Text>
-            <Text style={styles.text}>{this.state.listingData.address}</Text>
-            <Text style={styles.text}>
-              {this.state.listingData.description}
-            </Text>
-            <View style={styles.actions}>
-              {!!this.state.listingData.post_url ? (
-                <TouchableOpacity onPress={this.openInstaLink}>
-                  <FontAwesomeIcon size={22} icon={faInstagram} />
-                </TouchableOpacity>
-              ) : null}
-              <TouchableOpacity onPress={this.openMapsLink}>
-                <FontAwesomeIcon
-                  size={22}
-                  icon={faMapMarkedAlt}
-                  style={{ marginLeft: 4 }}
-                />
+                <View
+                  style={styles.firstRow}
+                  key={this.state.listingData.raffle_id}
+                >
+                  <Text style={styles.firstRowText}>
+                    {this.state.listingData.store_name} -&nbsp;
+                    {this.state.listingData.time_until}
+                  </Text>
+                  <FontAwesomeIcon size={22} icon={faChevronDown} />
+                </View>
               </TouchableOpacity>
-            </View>
+            ) : (
+              <View style={styles.raffleTouch}>
+                <TouchableOpacity
+                  style={styles.raffleTouch}
+                  onPress={this.expandCard}
+                >
+                  <View
+                    style={styles.firstRow}
+                    key={this.state.listingData.raffle_id}
+                  >
+                    <Text style={styles.firstRowText}>
+                      {this.state.listingData.store_name} -&nbsp;
+                      {this.state.listingData.time_until}
+                    </Text>
+                    <FontAwesomeIcon size={22} icon={faChevronUp} />
+                  </View>
+                </TouchableOpacity>
+                <Text style={styles.text}>
+                  Starts - {this.state.listingData.start_time_clean}&#13;
+                </Text>
+                <Text style={styles.text}>
+                  Ends - {this.state.listingData.end_time_clean}
+                </Text>
+                {/* <Text style={styles.text}>
+                  {this.state.listingData.address}
+                </Text> */}
+                <Text style={styles.text}>
+                  {this.state.listingData.description}
+                </Text>
+                <View style={styles.actions}>
+                  {!!this.state.listingData.post_url ? (
+                    <TouchableOpacity onPress={this.openInstaLink}>
+                      <FontAwesomeIcon size={22} icon={faInstagram} />
+                    </TouchableOpacity>
+                  ) : null}
+                  <TouchableOpacity onPress={this.openMapsLink}>
+                    <FontAwesomeIcon
+                      size={22}
+                      icon={faMapMarkedAlt}
+                      style={{ marginLeft: 4 }}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
           </View>
-        )}
-      </View>
+        ) : null}
+      </>
     );
   }
 }

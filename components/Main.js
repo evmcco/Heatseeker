@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, ScrollView, Button } from "react-native";
-import { Notifications } from "expo";
+import { StyleSheet, Text, View, ScrollView } from "react-native";
+import { Notifications, Font } from "expo";
 import * as Permissions from "expo-permissions";
 import RaffleCard from "./RaffleCard";
 import Login from "./Login";
@@ -11,15 +11,20 @@ class Main extends Component {
     name: null,
     user_id: null,
     userLocationLat: 0,
-    userLocationLon: 0
+    userLocationLon: 0,
+    fontLoaded: false
   };
 
   async componentDidMount() {
-    //lifecycle method
+    await Font.loadAsync({
+      "josefin-sans": require("../assets/fonts/JosefinSans-SemiBoldItalic.ttf"),
+      montserrat: require("../assets/fonts/Montserrat-Regular.ttf")
+    });
     const sneakerRaffles = await this.loadSneakerData();
     await navigator.geolocation.getCurrentPosition(this.logGeoData);
     this.setState({
-      sneakerRaffles
+      sneakerRaffles,
+      fontLoaded: true
     });
   }
 
@@ -92,10 +97,12 @@ class Main extends Component {
   render() {
     const styles = StyleSheet.create({
       deviceInfo: {
-        backgroundColor: "rgb(220,220,222)"
+        backgroundColor: "rgb(240,240,242)"
+        // backgroundColor: "#E52D00"
       },
       body: {
-        backgroundColor: "rgb(220,220,222)",
+        backgroundColor: "rgb(240,240,242)",
+        // backgroundColor: "#E52D00",
         top: 50
       },
       main: {
@@ -109,18 +116,20 @@ class Main extends Component {
       },
       header: {
         alignItems: "center",
-        backgroundColor: "rgb(220,220,222)",
+        backgroundColor: "rgb(240,240,242)",
+        // backgroundColor: "#E52D00",
         borderColor: "green",
         // borderWidth: 2,
         flexDirection: "row",
         justifyContent: "space-between",
-        top: 40,
+        top: 50,
         width: "100%"
       },
       headerText: {
         color: "#E52D00",
-        fontWeight: "bold",
-        fontSize: 40,
+        // color: "rgb(240,240,242)",
+        fontFamily: "josefin-sans",
+        fontSize: 45,
         textAlign: "center"
       },
       icon: {
@@ -129,29 +138,33 @@ class Main extends Component {
     });
 
     return (
-      <View style={styles.deviceInfo}>
-        <View style={styles.header}>
-          <Login setLoginResponseToState={this.setLoginResponseToState} />
-          <Text style={styles.headerText}>Heatseeker</Text>
-          <Text style={styles.icon} />
-        </View>
-        <ScrollView style={styles.body}>
-          <View style={styles.main}>
-            {!!this.state.userLocationLat
-              ? this.state.sneakerRaffles.map(sneaker => {
-                  return (
-                    <RaffleCard
-                      key={sneaker.sneaker_id}
-                      raffleEntry={sneaker}
-                      userLocLat={this.state.userLocationLat}
-                      userLocLon={this.state.userLocationLon}
-                    />
-                  );
-                })
-              : null}
+      <>
+        {!!this.state.fontLoaded ? (
+          <View style={styles.deviceInfo}>
+            <View style={styles.header}>
+              <Login setLoginResponseToState={this.setLoginResponseToState} />
+              <Text style={styles.headerText}>Heatseeker</Text>
+              <Text style={styles.icon} />
+            </View>
+            <ScrollView style={styles.body}>
+              <View style={styles.main}>
+                {!!this.state.userLocationLat
+                  ? this.state.sneakerRaffles.map(sneaker => {
+                      return (
+                        <RaffleCard
+                          key={sneaker.sneaker_id}
+                          raffleEntry={sneaker}
+                          userLocLat={this.state.userLocationLat}
+                          userLocLon={this.state.userLocationLon}
+                        />
+                      );
+                    })
+                  : null}
+              </View>
+            </ScrollView>
           </View>
-        </ScrollView>
-      </View>
+        ) : null}
+      </>
     );
   }
 }
