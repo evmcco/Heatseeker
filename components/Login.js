@@ -70,7 +70,7 @@ class Login extends Component {
   render() {
     const styles = StyleSheet.create({
       login: {
-        width: "20%"
+        // width: "20%"
       }
     });
 
@@ -82,11 +82,16 @@ class Login extends Component {
           <>
             <Button
               title="Logout"
+              style={styles.loginButton}
               onPress={() => this.setState({ name: null, user_id: null })}
             />
           </>
         ) : (
-          <Button title="Login" onPress={this.login} />
+          <Button
+            title="Login"
+            style={styles.loginButton}
+            onPress={this.login}
+          />
         )}
       </View>
     );
