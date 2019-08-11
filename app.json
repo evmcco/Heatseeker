@@ -9,7 +9,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/heatseeker_splash_logo.png",
+      "image": "./assets/heatseeker_logo_large.png",
       "resizeMode": "contain",
       "backgroundColor": "#E52D00"
     },
@@ -19,9 +19,6 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
-    },
-    "notification": {
-      "iosDisplayInForeground": true
     }
   }
 }

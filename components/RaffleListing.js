@@ -79,14 +79,20 @@ class RaffleListing extends Component {
       firstRow: {
         alignItems: "center",
         flexDirection: "row",
+        // flexWrap: "wrap",
         fontFamily: "montserrat",
         justifyContent: "space-between",
         width: "100%"
       },
       firstRowText: {
+        flex: 9,
         fontFamily: "montserrat",
         fontSize: 15,
         lineHeight: 22
+      },
+      firstRowInfoIcon: {
+        flex: 1,
+        marginRight: 4
       },
       text: {
         fontFamily: "montserrat",
@@ -123,7 +129,11 @@ class RaffleListing extends Component {
                     {this.state.listingData.store_name} -&nbsp;
                     {this.state.listingData.time_until}
                   </Text>
-                  <FontAwesomeIcon size={16} icon={faInfoCircle} />
+                  <FontAwesomeIcon
+                    size={16}
+                    icon={faInfoCircle}
+                    style={styles.firstRowInfoIcon}
+                  />
                 </View>
               </TouchableOpacity>
             ) : (
@@ -140,7 +150,11 @@ class RaffleListing extends Component {
                       {this.state.listingData.store_name} -&nbsp;
                       {this.state.listingData.time_until}
                     </Text>
-                    <FontAwesomeIcon size={16} icon={faInfoCircle} />
+                    <FontAwesomeIcon
+                      size={16}
+                      icon={faInfoCircle}
+                      style={styles.firstRowInfoIcon}
+                    />
                   </View>
                 </TouchableOpacity>
                 <Text style={styles.text}>
@@ -162,7 +176,7 @@ class RaffleListing extends Component {
                     <FontAwesomeIcon
                       size={22}
                       icon={faMapMarkedAlt}
-                      style={{ marginLeft: 4 }}
+                      style={{ marginLeft: 8, paddingHorizontal: 6 }}
                     />
                   </TouchableOpacity>
                 </View>
