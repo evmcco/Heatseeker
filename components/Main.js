@@ -42,7 +42,7 @@ class Main extends Component {
   };
 
   loadSneakerData = async () => {
-    const url = "http://10.150.40.93:3000/sneakers/all";
+    const url = "http://10.150.11.68:3000/sneakers/all";
     const response = await fetch(url, {
       method: "get"
     });
